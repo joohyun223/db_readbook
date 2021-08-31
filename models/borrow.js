@@ -1,17 +1,21 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const borrowSchema = new mongoose.Schema(
-    {
-        isbn: {type: Number, required: true},
-        lender: {type: String, default: false}
-    },
-    {
-        timestamps: true
-    }
-)
+  {
+    isbn: { type: Number, required: true },
+    gId: { type: String, required: true },
+    lender: { type: String, default: false },
+    state: { type: String, default: "ING" },
+    startTime: { type: String },
+    returnTime: { type: String },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-borrowSchema.statics.findAll = function(){
-    return this.find({});
-}
+borrowSchema.statics.findAll = function () {
+  return this.find({});
+};
 
-module.exports = mongoose.model('Borrow', borrowSchema);
+module.exports = mongoose.model("Borrow", borrowSchema);
