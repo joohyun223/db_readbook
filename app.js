@@ -29,6 +29,7 @@ app.use(function (req, res, next) {
 app.use("/borrows", require("./routes/borrows"));
 app.use("/books", require("./routes/books"));
 app.use("/util", require("./routes/util"));
+app.use("/posters", require("./routes/posters"));
 
 app.listen(PORT, () => {
   console.log("server listening on", MONGO_URI);

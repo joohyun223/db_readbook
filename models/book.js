@@ -6,6 +6,7 @@ const bookSchema = new mongoose.Schema(
     isbn: { type: String, required: true },
     admn: { type: String, required: true },
     lender: { type: String, default: "연구소(보관)" },
+    poster: { type: String, default: "" },
   },
   {
     timestamps: true,
