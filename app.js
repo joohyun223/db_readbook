@@ -1,9 +1,11 @@
 // require('dotenv').config();
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 
+const { default: axios } = require('axios');
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
+const cron = require("node-cron");
 
 const app = express();
 const { PORT, MONGO_URI } = process.env;
@@ -34,3 +36,11 @@ app.use("/posters", require("./routes/posters"));
 app.listen(PORT, () => {
   console.log("server listening on", MONGO_URI);
 });
+
+// 자정 12시 1분에 썸네일 업데이트
+cron.schedule('18 2 * * *', () => {
+  console.log('update book thumbnail image');
+  axios.post(`http://localhost:${PORT}/posters/update`).then(()=>{
+    console.log('updated success');
+  })
+})

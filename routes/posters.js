@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const Poster = require("../models/poster");
 const Book = require("../models/book");
 const axios = require('axios');
 
@@ -13,14 +12,12 @@ const reducePromises = (array, callback) => ( // [A]
   ), Promise.resolve([]))
 )
 
-// 관리자에서 db 업데이트
+// thumbnail 업데이트
 router.post("/update", (req, res) => {
-
   Book.findAll().select('isbn')
     .then((books) => {
       if (!books.length)
         return res.status(404).send({ err: "Books not found" });
-
 
       reducePromises(books, book => {
         return axios
@@ -34,10 +31,6 @@ router.post("/update", (req, res) => {
               })
             }
           })
-      })
-      .then(() => {
-        Book.updateOne({ isbn: "9791158390143" }, { poster: "testar---" }).then();
-        return res.status(200).send({ result: "updated" });
       }).catch(err=>{
         console.log('err' , err);
         return res.status(404).send({err2: err})
