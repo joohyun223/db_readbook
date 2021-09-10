@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
 
 // 관리자에서 db 업데이트
 router.post("/update", (req, res) => {
-  Book.deleteMany().then(() => {
+   Book.deleteMany().then(() => {
     Book.insertMany(req.body).then((r) => {
       res.json({ result: "ok" });
     });

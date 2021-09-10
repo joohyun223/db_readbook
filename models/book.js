@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const bookSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    isbn: { type: String, required: true },
-    admn: { type: String, default: "" },
+    name: { type: String, required: false },
+    isbn: { type: String, required: false },
+    admn: { type: String, required: false },
     lender: { type: String, default: "연구소(보관)" },
     poster: { type: String, default: "" },
   },
