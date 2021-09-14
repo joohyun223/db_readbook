@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { default: axios } = require("axios");
 const Book = require("../models/book");
 
 router.get("/", (req, res) => {
@@ -21,10 +22,22 @@ router.get("/", (req, res) => {
 });
 
 // 관리자에서 db 업데이트
+// 책 정보 initialize 시 poster 정보도 받아오기
 router.post("/update", (req, res) => {
+  const thumbnailUpdate = false;
+
+  Book.countDocuments({})
+    .then((cnt) => {
+      thumbnailUpdate = !cnt ? true : false;
+    })
+    .catch((err) => console.log("err", err));
+
   Book.deleteMany().then(() => {
     Book.insertMany(req.body).then((r) => {
       res.json({ result: "ok" });
+      if (thumbnailUpdate) {
+        axios.post(`http://localhost:${process.env.PORT}/posters/update`);
+      }
     });
   });
 });
