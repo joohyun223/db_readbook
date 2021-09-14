@@ -24,7 +24,7 @@ router.get("/", (req, res) => {
 // 관리자에서 db 업데이트
 // 책 정보 initialize 시 poster 정보도 받아오기
 router.post("/update", (req, res) => {
-  const thumbnailUpdate = false;
+  let thumbnailUpdate = false;
 
   Book.countDocuments({})
     .then((cnt) => {
