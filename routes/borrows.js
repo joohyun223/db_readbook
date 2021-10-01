@@ -2,8 +2,17 @@ const router = require("express").Router();
 const Borrow = require("../models/borrow");
 const moment = require("moment-timezone");
 
+// 대여정보 가져오기
 router.get("/", (req, res) => {
-  // res.send('GET: /borrows');
+  if (req.query) {
+    Borrow.find(req.query)
+      .exec()
+      .then((r) => {
+        res.status(200).send(r);
+      });
+    return;
+  }
+
   Borrow.findAll()
     .then((borrows) => {
       if (!borrows.length)
