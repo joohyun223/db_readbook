@@ -4,6 +4,21 @@ const moment = require("moment-timezone");
 
 // 대여정보 가져오기
 router.get("/", (req, res) => {
+
+  // 도서당 최신 대여정보 가져오기 
+  if(req.query.distinct){
+    Borrow.findAll().distinct('isbn').then(async r=>{
+      const result = await Promise.all(r.map(element => {
+          return Borrow.find({'isbn':element}).sort({'_id': -1}).limit(1).then(_distincted=>{
+            return _distincted[0];
+          });
+        }
+      ));
+      res.status(200).send(result);
+    });
+    return; 
+  }
+
   if (req.query) {
     Borrow.find(req.query)
       .exec()
@@ -25,22 +40,29 @@ router.get("/", (req, res) => {
 // CREATE 대여정보
 router.post("/book", (req, res) => {
   //대여여부 확인 후 데이터 추가
-  var borrow = new Borrow();
-  borrow.isbn = req.body.isbn;
-  borrow.lender = req.body.lender;
-  borrow.gId = req.body.gId;
-  borrow.startTime = moment
-    .tz(Date.now(), "Asia/Seoul")
-    .format("YYYY-MM-DD HH:mm:ss");
-  borrow.save((err) => {
-    if (err) {
-      console.error(err);
-      res.json({ result: 0, error: err, req: req.body });
+  Borrow.find({'isbn': req.body.isbn}).sort({'_id':-1}).limit(1).then(borrow=>{
+    if(borrow[0].state =="ING"){
+      res.status(400).json({ result: 0, error: "aleady lended" });
       return;
+    }else{
+      var borrow = new Borrow();
+      borrow.isbn = req.body.isbn;
+      borrow.lender = req.body.lender;
+      borrow.gId = req.body.gId;
+      borrow.startTime = moment
+        .tz(Date.now(), "Asia/Seoul")
+        .format("YYYY-MM-DD HH:mm:ss");
+      borrow.save((err) => {
+        if (err) {
+          console.error("errorOccured", err);
+          res.status(400).json({ result: 0, error: err, req: req.body });
+          return;
+        }
+        res.status(200).json({ result: 1 });
+      });
     }
-
-    res.json({ result: 1 });
   });
+  
 });
 
 //도서반납
@@ -83,7 +105,7 @@ router.put("/return", (req, res) => {
         .format("YYYY-MM-DD HH:mm:ss"),
     }
   );
-
+    
   Promise.all([pro1, pro2])
     .then((r) => {
       res.json({ result: "update success" });
