@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
 router.post("/book", (req, res) => {
   //대여여부 확인 후 데이터 추가
   Borrow.find({'isbn': req.body.isbn}).sort({'_id':-1}).limit(1).then(borrow=>{
-    if(borrow[0].state =="ING"){
+    if(borrow.length && borrow[0].state =="ING"){
       res.status(400).json({ result: 0, error: "aleady lended" });
       return;
     }else{
