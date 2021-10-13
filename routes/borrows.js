@@ -1,10 +1,39 @@
 const router = require("express").Router();
 const Borrow = require("../models/borrow");
+const axios = require('axios');
 const moment = require("moment-timezone");
 
+
+const getBookInfo = async(isbn)=> {
+  return await axios.get(`http://localhost:${process.env.PORT}/books?isbn=${isbn}`);
+}
 // 대여정보 가져오기
 router.get("/", (req, res) => {
 
+  if(req.query.bestbook){
+    Borrow.findAll().then(async r => {
+      const cntInfo =r.reduce((acc, _)=>{
+        const idx = acc.findIndex((arr)=>{return arr.isbn === _.isbn});
+        if(idx!=-1)
+        {
+          acc[idx] ={...acc[idx], cnt: acc[idx].cnt+1}; 
+        }else{
+            acc.push({isbn: _.isbn ,cnt: 1});
+        }
+        return acc.sort((prev, next)=>{return next.cnt - prev.cnt}).splice(0,3);
+      }, []);
+
+      const bookInfo = await Promise.all( cntInfo.map(element => {
+        return getBookInfo(element.isbn).then((res)=>{
+          return {...element, poster: res.data[0].poster, name:res.data[0].name}
+        })
+      }))
+      
+      res.status(200).send(bookInfo);
+      return;
+    })
+    return;
+  }
   // 도서당 최신 대여정보 가져오기 
   if(req.query.distinct){
     Borrow.findAll().distinct('isbn').then(async r=>{

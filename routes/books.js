@@ -24,20 +24,10 @@ router.get("/", (req, res) => {
 // 관리자에서 db 업데이트
 // 책 정보 initialize 시 poster 정보도 받아오기
 router.post("/update", (req, res) => {
-  let thumbnailUpdate = false;
-
-  Book.countDocuments({})
-    .then((cnt) => {
-      thumbnailUpdate = !cnt ? true : false;
-    })
-    .catch((err) => console.log("err", err));
-
   Book.deleteMany().then(() => {
     Book.insertMany(req.body).then((r) => {
       res.json({ result: "ok" });
-      if (thumbnailUpdate) {
-        axios.post(`http://localhost:${process.env.PORT}/posters/update`);
-      }
+      axios.post(`http://localhost:${process.env.PORT}/posters/update`);
     });
   });
 });
