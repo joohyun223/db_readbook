@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
         }else{
             acc.push({isbn: _.isbn ,cnt: 1});
         }
-        return acc.sort((prev, next)=>{return next.cnt - prev.cnt}).splice(0,3);
+        return acc.sort((prev, next)=>{return next.cnt - prev.cnt});
       }, []);
 
       const bookInfo = await Promise.all( cntInfo.map(element => {
