@@ -32,15 +32,24 @@ app.use("/borrows", require("./routes/borrows"));
 app.use("/books", require("./routes/books"));
 app.use("/util", require("./routes/util"));
 app.use("/posters", require("./routes/posters"));
+app.use("/persons", require("./routes/persons"));
 
 app.listen(PORT, () => {
   console.log("server listening on", MONGO_URI);
 });
 
 // 자정 12시 1분에 썸네일 업데이트
-cron.schedule('18 2 * * *', () => {
+cron.schedule('1 0 * * *', () => {
   console.log('update book thumbnail image');
   axios.post(`http://localhost:${PORT}/posters/update`).then(()=>{
+    console.log('updated success');
+  })
+})
+
+// 매 월 1일 자정 12시 1분에 이달의 독서왕 정보 업데이트
+cron.schedule('1 0 1 * *', () => {
+  console.log('update best person');
+  axios.post(`http://localhost:${PORT}/persons/best`).then(()=>{
     console.log('updated success');
   })
 })

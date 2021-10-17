@@ -78,6 +78,7 @@ router.post("/book", (req, res) => {
       borrow.isbn = req.body.isbn;
       borrow.lender = req.body.lender;
       borrow.gId = req.body.gId;
+      borrow.email = req.body.email;
       borrow.startTime = moment
         .tz(Date.now(), "Asia/Seoul")
         .format("YYYY-MM-DD HH:mm:ss");

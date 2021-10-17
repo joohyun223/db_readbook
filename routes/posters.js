@@ -37,7 +37,10 @@ router.post("/update", (req, res) => {
       })
 
     })
-    .catch((err) => res.status(500).send(err));
+    .catch((err) =>{
+      console.log('err' , err);
+      res.status(500).send(err)
+    } );
 });
 
 module.exports = router;
